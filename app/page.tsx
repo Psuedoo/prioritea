@@ -22,18 +22,23 @@ export default function Home() {
 const ProjectTable = () => {
   const projects = [
     {
-      name: "Project 1",
+      name: "Low Impact, Low Effort",
+      impact: 1,
+      levelOfEffort: 1,
+    },
+    {
+      name: "High Impact, Low Effort",
       impact: 5,
-      levelOfEffort: 3,
+      levelOfEffort: 1,
     },
     {
-      name: "Project 2",
-      impact: 3,
-      levelOfEffort: 2,
+      name: "Low Impact, High Effort",
+      impact: 1,
+      levelOfEffort: 5,
     },
     {
-      name: "Project 3",
-      impact: 4,
+      name: "High Impact, High Effort",
+      impact: 5,
       levelOfEffort: 5,
     },
   ];
