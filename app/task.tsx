@@ -1,6 +1,6 @@
 "use client";
 
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -49,11 +49,27 @@ export const TaskTable = () => {
   const [tasks, setTasks] = useState<Task[]>();
   const value = { tasks, setTasks };
 
+  function deleteTask(task: Task) {
+    if (!tasks) {
+      return;
+    }
+    let newTasks = tasks.filter((t) => t.name !== task.name);
+    setTasks(newTasks);
+  }
+
   const taskRows = tasks?.map((task) => (
     <Tr key={task.name}>
       <Td>{task.name}</Td>
       <Td isNumeric>{task.impact}</Td>
       <Td isNumeric>{task.levelOfEffort}</Td>
+      <Td>
+        <DeleteIcon
+          _hover={{ cursor: "pointer" }}
+          onClick={() => {
+            deleteTask(task);
+          }}
+        />
+      </Td>
     </Tr>
   ));
 
@@ -71,6 +87,7 @@ export const TaskTable = () => {
                   <Th>Name</Th>
                   <Th isNumeric>Impact</Th>
                   <Th isNumeric>Level of Effort</Th>
+                  <Th>Editing</Th>
                 </Tr>
               </Thead>
               <Tbody>{taskRows}</Tbody>
