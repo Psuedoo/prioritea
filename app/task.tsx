@@ -59,23 +59,30 @@ export const TaskTable = () => {
 
   return (
     <TaskContext.Provider value={value}>
-      <Box bgColor="brand.brown" borderRadius="lg">
-        <TableContainer>
-          <Table variant="unstyled">
-            <TableCaption>
-              <AddTaskButton />
-            </TableCaption>
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th isNumeric>Impact</Th>
-                <Th isNumeric>Level of Effort</Th>
-              </Tr>
-            </Thead>
-            <Tbody>{taskRows}</Tbody>
-          </Table>
-        </TableContainer>
-      </Box>
+      {tasks ? (
+        <Box bgColor="brand.brown" borderRadius="lg">
+          <TableContainer>
+            <Table variant="unstyled">
+              <TableCaption>
+                <AddTaskButton />
+              </TableCaption>
+              <Thead>
+                <Tr>
+                  <Th>Name</Th>
+                  <Th isNumeric>Impact</Th>
+                  <Th isNumeric>Level of Effort</Th>
+                </Tr>
+              </Thead>
+              <Tbody>{taskRows}</Tbody>
+            </Table>
+          </TableContainer>
+        </Box>
+      ) : (
+        <>
+          <p>No tasks yet!</p>
+          <AddTaskButton />
+        </>
+      )}
     </TaskContext.Provider>
   );
 };
