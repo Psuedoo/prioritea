@@ -7,7 +7,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 const baseStyle = definePartsStyle({
   td: {
     bgColor: "brand.tan",
-    textAlign: "center",
+    textAlign: "right",
   },
   tbody: {
     tr: {
