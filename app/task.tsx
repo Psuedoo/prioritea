@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormErrorMessage,
   FormHelperText,
   FormLabel,
   Input,
@@ -32,11 +33,38 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { TaskContext } from "./context";
+import { Field, Form, Formik } from "formik";
 
 export interface Task {
   name: string;
   impact: number;
   levelOfEffort: number;
+}
+
+function validateName(value: string) {
+  let error;
+  if (!value) {
+    error = "Name is required";
+  }
+  return error;
+}
+function validateImpact(value: number) {
+  let error;
+  if (!value) {
+    error = "Impact is required";
+  } else if (value < 1 || value > 5) {
+    error = "Impact must be between 1 and 5";
+  }
+  return error;
+}
+function validateLevelOfEffort(value: number) {
+  let error;
+  if (!value) {
+    error = "Level of Effort is required";
+  } else if (value < 1 || value > 5) {
+    error = "Level of Effort must be between 1 and 5";
+  }
+  return error;
 }
 
 export const TaskTable = () => {
@@ -110,13 +138,9 @@ export const TaskTable = () => {
 
 const AddTaskButton = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [taskName, setTaskName] = useState("");
-  const [taskImpact, setTaskImpact] = useState(1);
-  const [taskLevelOfEffort, setTaskLevelOfEffort] = useState(1);
   const { tasks, setTasks } = useContext(TaskContext);
 
   function addTask(task: Task) {
-    console.log("Adding task", task);
     if (!tasks) {
       setTasks([task]);
       onClose();
@@ -124,9 +148,6 @@ const AddTaskButton = () => {
     }
     let newTasks: Task[] = [...tasks, task];
     setTasks(newTasks);
-    setTaskName("");
-    setTaskImpact(1);
-    setTaskLevelOfEffort(1);
     onClose();
   }
 
@@ -142,83 +163,70 @@ const AddTaskButton = () => {
           <ModalHeader>Add Task</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
+            <Formik
+              initialValues={{ name: "", impact: 1, levelOfEffort: 1 }}
+              onSubmit={(values, actions) => {
+                setTimeout(() => {
                   addTask({
-                    name: taskName,
-                    impact: taskImpact,
-                    levelOfEffort: taskLevelOfEffort,
+                    name: values.name,
+                    impact: values.impact,
+                    levelOfEffort: values.levelOfEffort,
                   });
-                }
+                  actions.setSubmitting(false);
+                }, 500);
               }}
             >
-              <FormLabel>Name</FormLabel>
-              <Input
-                value={taskName}
-                onChange={(event) => {
-                  setTaskName(event.target.value);
-                }}
-                placeholder="Dishes"
-                type="text"
-              />
-              <FormLabel>Impact</FormLabel>
-              <NumberInput
-                value={taskImpact}
-                onChange={(event) => {
-                  setTaskImpact(Number(event));
-                }}
-                defaultValue={1}
-                max={5}
-                min={1}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>
-                1 is low impact, 5 is high impact.
-              </FormHelperText>
-              <FormLabel>Level of Effort</FormLabel>
-              <NumberInput
-                value={taskLevelOfEffort}
-                onChange={(event) => {
-                  setTaskLevelOfEffort(Number(event));
-                }}
-                defaultValue={1}
-                max={5}
-                min={1}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>
-                1 is low effort, 5 is high effort.
-              </FormHelperText>
-            </FormControl>
+              {(props) => (
+                <Form>
+                  <Field name="name" validate={validateName}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
+                        <FormLabel>Name</FormLabel>
+                        <Input {...field} placeholder="Dishes" />
+                        <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="impact" validate={validateImpact}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.impact && form.touched.impact}
+                      >
+                        <FormLabel>Impact</FormLabel>
+                        <Input {...field} placeholder="1" />
+                        <FormErrorMessage>
+                          {form.errors.impact}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="levelOfEffort" validate={validateLevelOfEffort}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.levelOfEffort &&
+                          form.touched.levelOfEffort
+                        }
+                      >
+                        <FormLabel>Level of Effort</FormLabel>
+                        <Input {...field} placeholder="1" />
+                        <FormErrorMessage>
+                          {form.errors.levelOfEffort}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Button mt={4} isLoading={props.isSubmitting} type="submit">
+                    Submit
+                  </Button>
+                </Form>
+              )}
+            </Formik>
           </ModalBody>
 
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button
-              onClick={() => {
-                addTask({
-                  name: taskName,
-                  impact: taskImpact,
-                  levelOfEffort: taskLevelOfEffort,
-                });
-              }}
-            >
-              Add Task
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
@@ -227,11 +235,6 @@ const AddTaskButton = () => {
 
 const EditTaskButton = (props: { task: Task }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [taskName, setTaskName] = useState(props.task.name);
-  const [taskImpact, setTaskImpact] = useState(props.task.impact);
-  const [taskLevelOfEffort, setTaskLevelOfEffort] = useState(
-    props.task.levelOfEffort
-  );
   const { tasks, setTasks } = useContext(TaskContext);
 
   function editTask(task: Task) {
@@ -263,84 +266,73 @@ const EditTaskButton = (props: { task: Task }) => {
           <ModalHeader>Edit Task</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
+            <Formik
+              initialValues={{
+                name: props.task.name,
+                impact: props.task.impact,
+                levelOfEffort: props.task.levelOfEffort,
+              }}
+              onSubmit={(values, actions) => {
+                setTimeout(() => {
                   editTask({
-                    name: taskName,
-                    impact: taskImpact,
-                    levelOfEffort: taskLevelOfEffort,
+                    name: values.name,
+                    impact: values.impact,
+                    levelOfEffort: values.levelOfEffort,
                   });
-                }
+                  actions.setSubmitting(false);
+                }, 500);
               }}
             >
-              <FormLabel>Name</FormLabel>
-              <Input
-                value={taskName}
-                onChange={(event) => {
-                  setTaskName(event.target.value);
-                }}
-                placeholder="Dishes"
-                type="text"
-              />
-              <FormLabel>Impact</FormLabel>
-              <NumberInput
-                value={taskImpact}
-                onChange={(event) => {
-                  setTaskImpact(Number(event));
-                }}
-                defaultValue={1}
-                max={5}
-                min={1}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>
-                1 is low impact, 5 is high impact.
-              </FormHelperText>
-              <FormLabel>Level of Effort</FormLabel>
-              <NumberInput
-                value={taskLevelOfEffort}
-                onChange={(event) => {
-                  setTaskLevelOfEffort(Number(event));
-                }}
-                defaultValue={1}
-                max={5}
-                min={1}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>
-                1 is low effort, 5 is high effort.
-              </FormHelperText>
-            </FormControl>
+              {(props) => (
+                <Form>
+                  <Field name="name" validate={validateName}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
+                        <FormLabel>Name</FormLabel>
+                        <Input {...field} placeholder="Dishes" />
+                        <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="impact" validate={validateImpact}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.impact && form.touched.impact}
+                      >
+                        <FormLabel>Impact</FormLabel>
+                        <Input {...field} placeholder="1" />
+                        <FormErrorMessage>
+                          {form.errors.impact}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="levelOfEffort" validate={validateLevelOfEffort}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.levelOfEffort &&
+                          form.touched.levelOfEffort
+                        }
+                      >
+                        <FormLabel>Level of Effort</FormLabel>
+                        <Input {...field} placeholder="1" />
+                        <FormErrorMessage>
+                          {form.errors.levelOfEffort}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Button mt={4} isLoading={props.isSubmitting} type="submit">
+                    Submit
+                  </Button>
+                </Form>
+              )}
+            </Formik>
           </ModalBody>
-
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={() => {
-                editTask({
-                  name: taskName,
-                  impact: taskImpact,
-                  levelOfEffort: taskLevelOfEffort,
-                });
-              }}
-            >
-              Edit Task
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
