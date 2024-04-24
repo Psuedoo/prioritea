@@ -33,7 +33,7 @@ import {
 import { useContext, useState } from "react";
 import { TaskContext } from "./context";
 
-interface Task {
+export interface Task {
   name: string;
   impact: number;
   levelOfEffort: number;
@@ -59,7 +59,7 @@ export const TaskTable = () => {
             <AddTaskButton />
           </div>
         ) : (
-          <Box bgColor="brand.brown" borderRadius="lg">
+          <Box bgColor="brand.brown" borderRadius="lg" boxShadow="lg">
             <TableContainer>
               <Table variant="unstyled">
                 <TableCaption>
@@ -67,9 +67,13 @@ export const TaskTable = () => {
                 </TableCaption>
                 <Thead>
                   <Tr>
-                    <Th>Name</Th>
-                    <Th isNumeric>Impact</Th>
-                    <Th isNumeric>Level of Effort</Th>
+                    <Th textAlign="center">Name</Th>
+                    <Th textAlign="center" isNumeric>
+                      Impact
+                    </Th>
+                    <Th textAlign="center" isNumeric>
+                      Level of Effort
+                    </Th>
                     <Th>Editing</Th>
                   </Tr>
                 </Thead>
@@ -77,8 +81,12 @@ export const TaskTable = () => {
                   {tasks.map((task) => (
                     <Tr key={task.name}>
                       <Td>{task.name}</Td>
-                      <Td isNumeric>{task.impact}</Td>
-                      <Td isNumeric>{task.levelOfEffort}</Td>
+                      <Td textAlign="center" isNumeric>
+                        {task.impact}
+                      </Td>
+                      <Td textAlign="center" isNumeric>
+                        {task.levelOfEffort}
+                      </Td>
                       <Td>
                         <EditTaskButton task={task} />
                         <DeleteIcon
@@ -200,7 +208,6 @@ const AddTaskButton = () => {
               Close
             </Button>
             <Button
-              colorScheme="blue"
               onClick={() => {
                 addTask({
                   name: taskName,

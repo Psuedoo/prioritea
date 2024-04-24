@@ -5,12 +5,15 @@ const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(tableAnatomy.keys);
 
 const baseStyle = definePartsStyle({
-  td: {
-    bgColor: "brand.tan",
-    textAlign: "right",
-  },
   tbody: {
     tr: {
+      bgColor: "brand.tan",
+      _even: {
+        bgColor: "brand.lightTan",
+      },
+      _hover: {
+        bgColor: "brand.lightGreen",
+      },
       "&:not(:last-child)": {
         borderBottom: "1px solid",
         borderColor: "brand.brown",
