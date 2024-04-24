@@ -18,11 +18,21 @@ const theme = extendTheme({
   },
   components: {
     Table: tableTheme,
+    Button: {
+      variants: {
+        solid: {
+          bgColor: "brand.white",
+          _hover: {
+            bgColor: "brand.lightGreen",
+          },
+        },
+      },
+    },
   },
   styles: {
     global: {
       body: {
-        bgColor: "brand.green",
+        bgGradient: "radial(brand.lightGreen, brand.green)",
       },
     },
   },
