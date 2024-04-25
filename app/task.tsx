@@ -1,6 +1,12 @@
 "use client";
 
-import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  DeleteIcon,
+  DownloadIcon,
+  EditIcon,
+  NotAllowedIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -28,6 +34,7 @@ import {
 import { useContext, useState } from "react";
 import { TaskContext } from "./context";
 import { Field, Form, Formik } from "formik";
+import useDownloader from "react-use-downloader";
 
 export interface Task {
   name: string;
@@ -77,62 +84,67 @@ export const TaskTable = () => {
     <>
       <TaskContext.Provider value={{ tasks, setTasks }}>
         {tasks.length === 0 ? (
-          <div className="flex flex-col justify-center items-center">
+          <Box className="flex flex-col justify-center items-center">
             <p>No Tasks.</p>
             <AddTaskButton />
-          </div>
-        ) : (
-          <Box bgColor="brand.brown" borderRadius="lg" boxShadow="lg">
-            <TableContainer>
-              <Table variant="unstyled">
-                <TableCaption>
-                  <AddTaskButton />
-                </TableCaption>
-                <Thead>
-                  <Tr>
-                    <Th textAlign="center">Name</Th>
-                    <Th textAlign="center" isNumeric>
-                      Impact
-                    </Th>
-                    <Th textAlign="center" isNumeric>
-                      Level of Effort
-                    </Th>
-                    <Th textAlign="center">Priority</Th>
-                    <Th>Editing</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {tasks
-                    .sort((a: Task, b: Task) => {
-                      return b.priority! - a.priority!;
-                    })
-                    .map((task) => (
-                      <Tr key={task.name}>
-                        <Td>{task.name}</Td>
-                        <Td textAlign="center" isNumeric>
-                          {task.impact}
-                        </Td>
-                        <Td textAlign="center" isNumeric>
-                          {task.levelOfEffort}
-                        </Td>
-                        <Td textAlign="center" isNumeric>
-                          {task.priority?.toFixed(2)}
-                        </Td>
-                        <Td>
-                          <EditTaskButton task={task} />
-                          <DeleteIcon
-                            _hover={{ cursor: "pointer" }}
-                            onClick={() => {
-                              deleteTask(task);
-                            }}
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
           </Box>
+        ) : (
+          <>
+            <Box bgColor="brand.brown" borderRadius="lg" boxShadow="lg">
+              <TableContainer>
+                <Table variant="unstyled">
+                  <TableCaption>
+                    <div className="flex justify-evenly">
+                      <AddTaskButton />
+                      <DownloadButtons />
+                    </div>
+                  </TableCaption>
+                  <Thead>
+                    <Tr>
+                      <Th textAlign="center">Name</Th>
+                      <Th textAlign="center" isNumeric>
+                        Impact
+                      </Th>
+                      <Th textAlign="center" isNumeric>
+                        Level of Effort
+                      </Th>
+                      <Th textAlign="center">Priority</Th>
+                      <Th>Editing</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {tasks
+                      .sort((a: Task, b: Task) => {
+                        return b.priority! - a.priority!;
+                      })
+                      .map((task) => (
+                        <Tr key={task.name}>
+                          <Td>{task.name}</Td>
+                          <Td textAlign="center" isNumeric>
+                            {task.impact}
+                          </Td>
+                          <Td textAlign="center" isNumeric>
+                            {task.levelOfEffort}
+                          </Td>
+                          <Td textAlign="center" isNumeric>
+                            {task.priority?.toFixed(2)}
+                          </Td>
+                          <Td>
+                            <EditTaskButton task={task} />
+                            <DeleteIcon
+                              _hover={{ cursor: "pointer" }}
+                              onClick={() => {
+                                deleteTask(task);
+                              }}
+                            />
+                          </Td>
+                        </Tr>
+                      ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </>
         )}
       </TaskContext.Provider>
     </>
@@ -229,7 +241,6 @@ const AddTaskButton = () => {
               )}
             </Formik>
           </ModalBody>
-
           <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
@@ -344,3 +355,37 @@ const EditTaskButton = (props: { task: Task }) => {
     </>
   );
 };
+
+function DownloadButtons() {
+  const { tasks } = useContext(TaskContext);
+  const { download } = useDownloader();
+
+  function createCSV(tasks: Task[]) {
+    const keys = Object.keys(tasks[0]);
+
+    const headerRow = keys.join(",");
+
+    const dataRows = tasks.map((task) => {
+      return keys.map((key) => task[key as keyof Task]).join(",");
+    });
+
+    const csv = [headerRow, ...dataRows].join("\n");
+
+    return csv;
+  }
+
+  function handleDownload() {
+    const csv = createCSV(tasks);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    download(url, "priorities.csv");
+  }
+
+  return (
+    <>
+      <Button leftIcon={<DownloadIcon />} onClick={() => handleDownload()}>
+        Download CSV Report
+      </Button>
+    </>
+  );
+}
