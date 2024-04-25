@@ -16,11 +16,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Table,
   TableCaption,
   TableContainer,
@@ -39,6 +34,7 @@ export interface Task {
   name: string;
   impact: number;
   levelOfEffort: number;
+  priority?: number;
 }
 
 function validateName(value: string) {
@@ -102,30 +98,38 @@ export const TaskTable = () => {
                     <Th textAlign="center" isNumeric>
                       Level of Effort
                     </Th>
+                    <Th textAlign="center">Priority</Th>
                     <Th>Editing</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {tasks.map((task) => (
-                    <Tr key={task.name}>
-                      <Td>{task.name}</Td>
-                      <Td textAlign="center" isNumeric>
-                        {task.impact}
-                      </Td>
-                      <Td textAlign="center" isNumeric>
-                        {task.levelOfEffort}
-                      </Td>
-                      <Td>
-                        <EditTaskButton task={task} />
-                        <DeleteIcon
-                          _hover={{ cursor: "pointer" }}
-                          onClick={() => {
-                            deleteTask(task);
-                          }}
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
+                  {tasks
+                    .sort((a: Task, b: Task) => {
+                      return b.priority! - a.priority!;
+                    })
+                    .map((task) => (
+                      <Tr key={task.name}>
+                        <Td>{task.name}</Td>
+                        <Td textAlign="center" isNumeric>
+                          {task.impact}
+                        </Td>
+                        <Td textAlign="center" isNumeric>
+                          {task.levelOfEffort}
+                        </Td>
+                        <Td textAlign="center" isNumeric>
+                          {task.priority?.toFixed(2)}
+                        </Td>
+                        <Td>
+                          <EditTaskButton task={task} />
+                          <DeleteIcon
+                            _hover={{ cursor: "pointer" }}
+                            onClick={() => {
+                              deleteTask(task);
+                            }}
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
                 </Tbody>
               </Table>
             </TableContainer>
@@ -171,6 +175,7 @@ const AddTaskButton = () => {
                     name: values.name,
                     impact: values.impact,
                     levelOfEffort: values.levelOfEffort,
+                    priority: values.impact / values.levelOfEffort,
                   });
                   actions.setSubmitting(false);
                 }, 500);
@@ -247,6 +252,7 @@ const EditTaskButton = (props: { task: Task }) => {
       name: task.name,
       impact: task.impact,
       levelOfEffort: task.levelOfEffort,
+      priority: task.impact / task.levelOfEffort,
     };
     setTasks([...tasks]);
     onClose();
@@ -278,6 +284,7 @@ const EditTaskButton = (props: { task: Task }) => {
                     name: values.name,
                     impact: values.impact,
                     levelOfEffort: values.levelOfEffort,
+                    priority: values.impact / values.levelOfEffort,
                   });
                   actions.setSubmitting(false);
                 }, 500);
