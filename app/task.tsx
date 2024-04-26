@@ -374,7 +374,15 @@ const EditTaskButton = (props: { task: Task }) => {
                       <FormControl
                         isInvalid={form.errors.impact && form.touched.impact}
                       >
-                        <FormLabel>Impact</FormLabel>
+                        <FormLabel>
+                          Impact
+                          <Tooltip
+                            hasArrow
+                            label="What impact will this task have if completed?"
+                          >
+                            <QuestionOutlineIcon className="pl-1" />
+                          </Tooltip>
+                        </FormLabel>
                         <Input {...field} placeholder="1" />
                         <FormErrorMessage>
                           {form.errors.impact}
@@ -390,7 +398,15 @@ const EditTaskButton = (props: { task: Task }) => {
                           form.touched.levelOfEffort
                         }
                       >
-                        <FormLabel>Level of Effort</FormLabel>
+                        <FormLabel>
+                          Level of Effort
+                          <Tooltip
+                            hasArrow
+                            label="How much effort will the task need to complete?"
+                          >
+                            <QuestionOutlineIcon className="pl-1" />
+                          </Tooltip>
+                        </FormLabel>
                         <Input {...field} placeholder="1" />
                         <FormErrorMessage>
                           {form.errors.levelOfEffort}
