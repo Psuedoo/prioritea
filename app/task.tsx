@@ -22,6 +22,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Table,
   TableCaption,
   TableContainer,
@@ -41,9 +42,25 @@ import useDownloader from "react-use-downloader";
 
 export interface Task {
   name: string;
-  impact: number;
-  levelOfEffort: number;
+  impact: Impact;
+  levelOfEffort: LevelOfEffort;
   priority?: number;
+}
+
+enum Impact {
+  Low = 1,
+  Minor = 2,
+  Moderate = 3,
+  Signifant = 4,
+  Critical = 5,
+}
+
+enum LevelOfEffort {
+  Minimal = 1,
+  Low = 2,
+  Moderate = 3,
+  High = 4,
+  Maximum = 5,
 }
 
 function validateName(value: string) {
@@ -57,8 +74,6 @@ function validateImpact(value: number) {
   let error;
   if (!value) {
     error = "Impact is required";
-  } else if (value < 1 || value > 5) {
-    error = "Impact must be between 1 and 5";
   }
   return error;
 }
@@ -66,8 +81,6 @@ function validateLevelOfEffort(value: number) {
   let error;
   if (!value) {
     error = "Level of Effort is required";
-  } else if (value < 1 || value > 5) {
-    error = "Level of Effort must be between 1 and 5";
   }
   return error;
 }
@@ -160,11 +173,9 @@ export const TaskTable = () => {
                           <Td textAlign="center">
                             <OverflownText>{task.name}</OverflownText>
                           </Td>
+                          <Td textAlign="center">{Impact[task.impact]}</Td>
                           <Td textAlign="center" isNumeric>
-                            {task.impact}
-                          </Td>
-                          <Td textAlign="center" isNumeric>
-                            {task.levelOfEffort}
+                            {LevelOfEffort[task.levelOfEffort]}
                           </Td>
                           <Td textAlign="center" isNumeric>
                             {task.priority?.toFixed(2)}
@@ -219,7 +230,11 @@ const AddTaskButton = () => {
           <ModalCloseButton />
           <ModalBody>
             <Formik
-              initialValues={{ name: "", impact: 1, levelOfEffort: 1 }}
+              initialValues={{
+                name: "",
+                impact: Impact.Low,
+                levelOfEffort: LevelOfEffort.Minimal,
+              }}
               onSubmit={(values, actions) => {
                 setTimeout(() => {
                   addTask({
@@ -259,7 +274,13 @@ const AddTaskButton = () => {
                             <QuestionOutlineIcon className="pl-1" />
                           </Tooltip>
                         </FormLabel>
-                        <Input {...field} placeholder="1" />
+                        <Select {...field}>
+                          <option value="1">Low</option>
+                          <option value="2">Minor</option>
+                          <option value="3">Moderate</option>
+                          <option value="4">Significant</option>
+                          <option value="5">Critical</option>
+                        </Select>
                         <FormErrorMessage>
                           {form.errors.impact}
                         </FormErrorMessage>
@@ -283,7 +304,13 @@ const AddTaskButton = () => {
                             <QuestionOutlineIcon className="pl-1" />
                           </Tooltip>
                         </FormLabel>
-                        <Input {...field} placeholder="1" />
+                        <Select {...field}>
+                          <option value="1">Minimal</option>
+                          <option value="2">Low</option>
+                          <option value="3">Moderate</option>
+                          <option value="4">High</option>
+                          <option value="5">Maximum</option>
+                        </Select>
                         <FormErrorMessage>
                           {form.errors.levelOfEffort}
                         </FormErrorMessage>
@@ -383,7 +410,13 @@ const EditTaskButton = (props: { task: Task }) => {
                             <QuestionOutlineIcon className="pl-1" />
                           </Tooltip>
                         </FormLabel>
-                        <Input {...field} placeholder="1" />
+                        <Select {...field}>
+                          <option value="1">Low</option>
+                          <option value="2">Minor</option>
+                          <option value="3">Moderate</option>
+                          <option value="4">Significant</option>
+                          <option value="5">Critical</option>
+                        </Select>
                         <FormErrorMessage>
                           {form.errors.impact}
                         </FormErrorMessage>
@@ -407,7 +440,13 @@ const EditTaskButton = (props: { task: Task }) => {
                             <QuestionOutlineIcon className="pl-1" />
                           </Tooltip>
                         </FormLabel>
-                        <Input {...field} placeholder="1" />
+                        <Select {...field}>
+                          <option value="1">Minimal</option>
+                          <option value="2">Low</option>
+                          <option value="3">Moderate</option>
+                          <option value="4">High</option>
+                          <option value="5">Maximum</option>
+                        </Select>
                         <FormErrorMessage>
                           {form.errors.levelOfEffort}
                         </FormErrorMessage>
