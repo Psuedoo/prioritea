@@ -10,6 +10,7 @@ import {
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -26,13 +27,14 @@ import {
   TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tooltip,
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { TaskContext } from "./context";
 import { Field, Form, Formik } from "formik";
 import useDownloader from "react-use-downloader";
@@ -70,6 +72,31 @@ function validateLevelOfEffort(value: number) {
   return error;
 }
 
+const OverflownText = ({ children, ...props }: { children: string }) => {
+  const ref = useRef<HTMLElement | null>(null);
+  const [isOverflown, setIsOverflown] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current!;
+    if (!element) {
+      return;
+    }
+    setIsOverflown(element.scrollWidth > element.clientWidth);
+  }, []);
+
+  return (
+    <Flex minW="0" justifyContent="center">
+      <Box overflow="hidden">
+        <Tooltip label={children} isDisabled={!isOverflown}>
+          <Text isTruncated maxW="10rem" ref={ref} {...props}>
+            {children}
+          </Text>
+        </Tooltip>
+      </Box>
+    </Flex>
+  );
+};
+
 export const TaskTable = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -97,7 +124,7 @@ export const TaskTable = () => {
                   <TableCaption>
                     <div className="flex justify-evenly">
                       <AddTaskButton />
-                      <DownloadButtons />
+                      <DownloadButton />
                     </div>
                   </TableCaption>
                   <Thead>
@@ -130,7 +157,9 @@ export const TaskTable = () => {
                       })
                       .map((task) => (
                         <Tr key={task.name}>
-                          <Td>{task.name}</Td>
+                          <Td textAlign="center">
+                            <OverflownText>{task.name}</OverflownText>
+                          </Td>
                           <Td textAlign="center" isNumeric>
                             {task.impact}
                           </Td>
@@ -383,7 +412,7 @@ const EditTaskButton = (props: { task: Task }) => {
   );
 };
 
-function DownloadButtons() {
+function DownloadButton() {
   const { tasks } = useContext(TaskContext);
   const { download } = useDownloader();
 

@@ -15,7 +15,7 @@ export default function Home() {
         level of effort, and let Prioritea handle the rest. Start organizing
         your tasks with Prioritea and make your to-do list a breeze!
       </p>
-      <div className="w-1/2">
+      <div className="w-2/3">
         <TaskTable />
       </div>
     </main>
