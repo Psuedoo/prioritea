@@ -5,7 +5,7 @@ import {
   DeleteIcon,
   DownloadIcon,
   EditIcon,
-  NotAllowedIcon,
+  QuestionOutlineIcon,
 } from "@chakra-ui/icons";
 import {
   Box,
@@ -28,6 +28,7 @@ import {
   Td,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -108,7 +109,17 @@ export const TaskTable = () => {
                       <Th textAlign="center" isNumeric>
                         Level of Effort
                       </Th>
-                      <Th textAlign="center">Priority</Th>
+                      <Th textAlign="center">
+                        <p className="flex justify-center items-center">
+                          Priority
+                          <Tooltip
+                            hasArrow
+                            label="Calculated by impact / level of effort."
+                          >
+                            <QuestionOutlineIcon className="ml-1" />
+                          </Tooltip>
+                        </p>
+                      </Th>
                       <Th>Editing</Th>
                     </Tr>
                   </Thead>
@@ -210,7 +221,15 @@ const AddTaskButton = () => {
                       <FormControl
                         isInvalid={form.errors.impact && form.touched.impact}
                       >
-                        <FormLabel>Impact</FormLabel>
+                        <FormLabel>
+                          Impact
+                          <Tooltip
+                            hasArrow
+                            label="What impact will this task have if completed?"
+                          >
+                            <QuestionOutlineIcon className="pl-1" />
+                          </Tooltip>
+                        </FormLabel>
                         <Input {...field} placeholder="1" />
                         <FormErrorMessage>
                           {form.errors.impact}
@@ -226,7 +245,15 @@ const AddTaskButton = () => {
                           form.touched.levelOfEffort
                         }
                       >
-                        <FormLabel>Level of Effort</FormLabel>
+                        <FormLabel>
+                          Level of Effort
+                          <Tooltip
+                            hasArrow
+                            label="How much effort will the task need to complete?"
+                          >
+                            <QuestionOutlineIcon className="pl-1" />
+                          </Tooltip>
+                        </FormLabel>
                         <Input {...field} placeholder="1" />
                         <FormErrorMessage>
                           {form.errors.levelOfEffort}
