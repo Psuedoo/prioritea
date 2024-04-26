@@ -4,6 +4,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { tableTheme } from "../components/table";
 
+// This is the color scheme I have been using:
+// https://coolors.co/ccd5ae-e9edc9-fefae0-faedcd-d4a373
 const theme = extendTheme({
   colors: {
     brand: {
