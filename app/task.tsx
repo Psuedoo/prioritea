@@ -225,7 +225,7 @@ const DeleteTaskButton = (props: { task: Task }) => {
 
             <AlertDialogBody>
               Are you sure you want to delete task `{props.task.name}`? You
-              can't undo this action afterwards.
+              can&apos;t undo this action afterwards.
             </AlertDialogBody>
 
             <AlertDialogFooter>
