@@ -43,7 +43,7 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { TaskContext } from "./context";
-import { Field, Form, Formik } from "formik";
+import { Field, FieldInputProps, Form, Formik, FormikProps } from "formik";
 import useDownloader from "react-use-downloader";
 
 export interface Task {
@@ -76,23 +76,9 @@ function validateName(value: string) {
   }
   return error;
 }
-function validateImpact(value: number) {
-  let error;
-  if (!value) {
-    error = "Impact is required";
-  }
-  return error;
-}
-function validateLevelOfEffort(value: number) {
-  let error;
-  if (!value) {
-    error = "Level of Effort is required";
-  }
-  return error;
-}
 
 const OverflownText = ({ children, ...props }: { children: string }) => {
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLParagraphElement | null>(null);
   const [isOverflown, setIsOverflown] = useState(false);
 
   useEffect(() => {
@@ -197,7 +183,7 @@ export const TaskTable = () => {
 
 const DeleteTaskButton = (props: { task: Task }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef();
+  const cancelRef = useRef(null);
   const { tasks, setTasks } = useContext(TaskContext);
 
   function deleteTask(task: Task) {
@@ -225,7 +211,7 @@ const DeleteTaskButton = (props: { task: Task }) => {
 
             <AlertDialogBody>
               Are you sure you want to delete task `{props.task.name}`? You
-              can't undo this action afterwards.
+              can&apos;t undo this action afterwards.
             </AlertDialogBody>
 
             <AlertDialogFooter>
@@ -298,9 +284,15 @@ const AddTaskButton = () => {
               {(props) => (
                 <Form>
                   <Field name="name" validate={validateName}>
-                    {({ field, form }) => (
+                    {({
+                      form,
+                      field,
+                    }: {
+                      form: FormikProps<{ name: string }>;
+                      field: FieldInputProps<string>;
+                    }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}
+                        isInvalid={!!form.errors.name && form.touched.name} // No clue why the !! works tbh
                       >
                         <FormLabel>Name</FormLabel>
                         <Input {...field} placeholder="Dishes" />
@@ -308,11 +300,9 @@ const AddTaskButton = () => {
                       </FormControl>
                     )}
                   </Field>
-                  <Field name="impact" validate={validateImpact}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={form.errors.impact && form.touched.impact}
-                      >
+                  <Field name="impact">
+                    {({ field }: { field: FieldInputProps<Impact> }) => (
+                      <FormControl>
                         <FormLabel>
                           Impact
                           <Tooltip
@@ -329,20 +319,12 @@ const AddTaskButton = () => {
                           <option value="4">Significant</option>
                           <option value="5">Critical</option>
                         </Select>
-                        <FormErrorMessage>
-                          {form.errors.impact}
-                        </FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>
-                  <Field name="levelOfEffort" validate={validateLevelOfEffort}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.levelOfEffort &&
-                          form.touched.levelOfEffort
-                        }
-                      >
+                  <Field name="levelOfEffort">
+                    {({ field }: { field: FieldInputProps<LevelOfEffort> }) => (
+                      <FormControl>
                         <FormLabel>
                           Level of Effort
                           <Tooltip
@@ -359,9 +341,6 @@ const AddTaskButton = () => {
                           <option value="4">High</option>
                           <option value="5">Maximum</option>
                         </Select>
-                        <FormErrorMessage>
-                          {form.errors.levelOfEffort}
-                        </FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>
@@ -434,9 +413,15 @@ const EditTaskButton = (props: { task: Task }) => {
               {(props) => (
                 <Form>
                   <Field name="name" validate={validateName}>
-                    {({ field, form }) => (
+                    {({
+                      form,
+                      field,
+                    }: {
+                      form: FormikProps<{ name: string }>;
+                      field: FieldInputProps<string>;
+                    }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}
+                        isInvalid={!!form.errors.name && form.touched.name}
                       >
                         <FormLabel>Name</FormLabel>
                         <Input {...field} placeholder="Dishes" />
@@ -444,11 +429,9 @@ const EditTaskButton = (props: { task: Task }) => {
                       </FormControl>
                     )}
                   </Field>
-                  <Field name="impact" validate={validateImpact}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={form.errors.impact && form.touched.impact}
-                      >
+                  <Field name="impact">
+                    {({ field }: { field: FieldInputProps<Impact> }) => (
+                      <FormControl>
                         <FormLabel>
                           Impact
                           <Tooltip
@@ -465,20 +448,12 @@ const EditTaskButton = (props: { task: Task }) => {
                           <option value="4">Significant</option>
                           <option value="5">Critical</option>
                         </Select>
-                        <FormErrorMessage>
-                          {form.errors.impact}
-                        </FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>
-                  <Field name="levelOfEffort" validate={validateLevelOfEffort}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.levelOfEffort &&
-                          form.touched.levelOfEffort
-                        }
-                      >
+                  <Field name="levelOfEffort">
+                    {({ field }: { field: FieldInputProps<LevelOfEffort> }) => (
+                      <FormControl>
                         <FormLabel>
                           Level of Effort
                           <Tooltip
@@ -495,9 +470,6 @@ const EditTaskButton = (props: { task: Task }) => {
                           <option value="4">High</option>
                           <option value="5">Maximum</option>
                         </Select>
-                        <FormErrorMessage>
-                          {form.errors.levelOfEffort}
-                        </FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>
