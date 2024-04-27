@@ -8,6 +8,12 @@ import {
   QuestionOutlineIcon,
 } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
   Box,
   Button,
   Flex,
@@ -113,14 +119,6 @@ const OverflownText = ({ children, ...props }: { children: string }) => {
 export const TaskTable = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  function deleteTask(task: Task) {
-    if (!tasks) {
-      return;
-    }
-    let newTasks = tasks.filter((t) => t.name !== task.name);
-    setTasks(newTasks);
-  }
-
   return (
     <>
       <TaskContext.Provider value={{ tasks, setTasks }}>
@@ -182,12 +180,7 @@ export const TaskTable = () => {
                           </Td>
                           <Td>
                             <EditTaskButton task={task} />
-                            <DeleteIcon
-                              _hover={{ cursor: "pointer" }}
-                              onClick={() => {
-                                deleteTask(task);
-                              }}
-                            />
+                            <DeleteTaskButton task={task} />
                           </Td>
                         </Tr>
                       ))}
@@ -198,6 +191,61 @@ export const TaskTable = () => {
           </>
         )}
       </TaskContext.Provider>
+    </>
+  );
+};
+
+const DeleteTaskButton = (props: { task: Task }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
+  const { tasks, setTasks } = useContext(TaskContext);
+
+  function deleteTask(task: Task) {
+    if (!task || !tasks) {
+      return;
+    }
+    let newTasks = tasks.filter((t) => t.name !== task.name);
+    setTasks(newTasks);
+  }
+
+  return (
+    <>
+      <DeleteIcon onClick={onOpen} _hover={{ cursor: "pointer" }} />
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Task
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete task `{props.task.name}`? You
+              can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  deleteTask(props.task);
+                  onClose();
+                }}
+                ml={3}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 };
