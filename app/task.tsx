@@ -472,12 +472,23 @@ function DownloadButton() {
   const { download } = useDownloader();
 
   function createCSV(tasks: Task[]) {
+    if (!tasks) {
+      return "";
+    }
+
     const keys = Object.keys(tasks[0]);
 
     const headerRow = keys.join(",");
 
     const dataRows = tasks.map((task) => {
-      return keys.map((key) => task[key as keyof Task]).join(",");
+      // Replace commas in task names with spaces
+      // this prevents the csv from being weird
+      let taskName = task.name;
+      task.name = task.name.replaceAll(",", " ");
+      let myKeys = keys.map((key) => task[key as keyof Task]).join(",");
+      // Put the original task name back for UI
+      task.name = taskName;
+      return myKeys;
     });
 
     const csv = [headerRow, ...dataRows].join("\n");
