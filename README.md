@@ -56,7 +56,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-prioritea">About Prioritea</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
       </ul>
@@ -80,7 +80,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About Prioritea
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 ![Dashboard Screenshot](screenshot.png)
@@ -107,7 +107,7 @@ I needed to prioritze some tasks for work. Why make a spreadsheet in 20 minutes 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
