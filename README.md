@@ -41,7 +41,7 @@
     <a href="https://github.com/psuedoo/prioritea"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/psuedoo/prioritea">View Demo</a>
+    <a href="https://prioritea.vercel.app/">View Demo</a>
     ·
     <a href="https://github.com/psuedoo/prioritea/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
